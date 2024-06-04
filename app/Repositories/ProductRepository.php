@@ -3,8 +3,11 @@
 namespace App\Repositories;
 
 use App\Models\Product;
+use ErrorException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ProductRepository
 {
@@ -15,7 +18,7 @@ class ProductRepository
         $this->product = Product::query();
     }
 
-    public function index(array $querys): Collection
+    public function index(array $querys = []): Collection
     {
         return $this->filterQuery($querys)->get();
     }
@@ -27,12 +30,44 @@ class ProductRepository
 
     public function store(array $data): Product
     {
-        return $this->product->create($data);
+        try {
+            DB::beginTransaction();
+            return $this->product->create($data);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $code = strval(\time());
+            Log::error('ProductRepository->store code: '.$code.' message: '.$e->getMessage().' data: ',$data);
+            throw new ErrorException('Unexpected error. code: '.$code);
+        }
     }
 
     public function update(Product $product, array $data): bool
     {
-        return $product->update($data);
+        try {
+            DB::beginTransaction();
+            return $product->update($data);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $code = strval(\time());
+            Log::error('ProductRepository->update code: '.$code.' message: '.$e->getMessage().' data: ',$data);
+            throw new ErrorException('Unexpected error. code: '.$code);
+        }
+    }
+
+    public function destroy(Product $product): bool
+    {
+        try {
+            DB::beginTransaction();
+            return $product->delete();
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $code = strval(\time());
+            Log::error('ProductRepository->destroy code: '.$code.' message: '.$e->getMessage());
+            throw new ErrorException('Unexpected error. code: '.$code);
+        }
     }
 
     private function filterQuery(array $querys): Builder
@@ -46,7 +81,7 @@ class ProductRepository
                     $this->product->where('category', $queryValue);
                     break;
                 case 'image_url':
-                    if ($queryValue == true) {
+                    if ($queryValue) {
                         $this->product->whereNotNull('category');
                     } else {
                         $this->product->whereNull('category');

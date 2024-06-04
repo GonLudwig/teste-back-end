@@ -14,7 +14,7 @@ class UpdateProductRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|string|max:255|unique:products,name,'.$this->product->id,
+            'name' => 'sometimes|string|max:255|unique:products,name,'.$this->product,
             'price' => 'sometimes|numeric|min:0',
             'description' => 'sometimes|string',
             'category' => 'sometimes|string|max:255',

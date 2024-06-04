@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Http\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ProductService
@@ -16,14 +15,14 @@ class ProductService
     {
     }
 
-    public function index(array $queryParms): Collection
+    public function index(array $queryParms = []): Collection
     {
         return $this->repository->index(
             $this->validateQueryParms($queryParms)
         );
     }
 
-    public function show($product): Product
+    public function show(mixed $product): Product
     {
         $product = $this->repository->show($this->validateId($product));
 
@@ -37,7 +36,7 @@ class ProductService
         return $this->repository->store($data); 
     }
 
-    public function update($product, array $data): string
+    public function update(mixed $product, array $data): string
     {
         $product = $this->repository->show($this->validateId($product));
 
@@ -50,14 +49,26 @@ class ProductService
         return 'error on updated';
     }
 
-    // public function destroy(Product $product)
-    // {
-    //     //
-    // }
+    public function destroy(mixed $product): string
+    {
+        $product = $this->repository->show($this->validateId($product));
+
+        \throw_if($product == \null, new HttpException(404, 'Product not found.'));
+
+        if ($this->repository->destroy($product)) {
+            return 'deleted successfully';
+        }
+
+        return 'error on updated';
+    }
 
     private function validateQueryParms(array $queryParms): array
     {
         $querys = [];
+
+        if (empty($queryParms)) {
+            return $querys;
+        }
 
         if (isset($queryParms['name'])) {
             $querys['name'] = $queryParms['name'];
@@ -80,7 +91,7 @@ class ProductService
         return $querys;
     }
 
-    private function validateId($product): int
+    private function validateId(mixed $product): int
     {
         $id = intval($product);
 
