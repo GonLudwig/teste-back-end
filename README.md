@@ -1,4 +1,3 @@
-
 # Projeto Laravel com Docker
 
 Este projeto é uma aplicação Laravel configurada para rodar com Docker. A seguir, você encontrará instruções detalhadas sobre como configurar, executar e utilizar o projeto.
@@ -18,7 +17,6 @@ DB_USERNAME=
 DB_PASSWORD=
 ```
 
-
 ### Exemplo de Configuração
 
 ```env
@@ -37,13 +35,7 @@ DB_PASSWORD=sua_senha
 
    Isso irá construir as imagens Docker e iniciar os contêineres em segundo plano.
 
-2. **Gerar a chave da aplicação:**
-
-   ```sh
-   docker exec product php artisan key:generate
-   ```
-
-3. **Executar as migrações do banco de dados:**
+2. **Executar as migrações do banco de dados:**
 
    ```sh
    docker exec product php artisan migrate
@@ -69,6 +61,14 @@ docker exec -d product php artisan horizon
 
 ## Importação de Produtos
 
+### Configuração da URL para Importação
+
+Certifique-se de que a variável `COMMAND_PRODUCT_IMPORT_URL` está configurada corretamente no arquivo `.env`:
+
+```env
+COMMAND_PRODUCT_IMPORT_URL='https://fakestoreapi.com'
+```
+
 ### Importação de Todos os Produtos
 
 Para importar todos os produtos, execute o comando:
@@ -86,6 +86,14 @@ docker exec product php artisan products:import --id=1 --id=2 --id=3
 ```
 
 Substitua `1`, `2`, `3` pelos IDs dos produtos que deseja importar.
+
+## Rodando os Testes
+
+Para rodar os testes, execute o comando:
+
+```sh
+docker-compose run --rm product php ./vendor/bin/pest
+```
 
 ## Parando os Contêineres
 
