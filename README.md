@@ -1,81 +1,110 @@
-# Teste prático para Back-End 
-***
 
-Bem-vindo.
+# Projeto Laravel com Docker
 
-Usarei esse teste para avaliar tecnicamente todas as pessoas que estão participando do nosso processo seletivo para a vaga de desenvolvimento Back-End, lembrando que a aplicação de patterns como service e repository e processamento de filas assíncronas com horizon fazem diferença comente o seu código para facilitar a revisão o prazo de execução é de 3 dias corridos a partir do momento que o teste foi encaminhado para você, se tiver alguma duvida pergunte. o teste deve ter um read-me que explique o projeto e como rodá-lo.
+Este projeto é uma aplicação Laravel configurada para rodar com Docker. A seguir, você encontrará instruções detalhadas sobre como configurar, executar e utilizar o projeto.
 
-## TL;DR
+## Pré-requisitos
 
-- Você deverá criar um CRUD através de uma API REST com Laravel;
-- Você deverá criar um comando artisan que se comunicará com uma outra API para importar em seu banco de dados;
+- Docker
+- Docker Compose
 
-## Começando
+## Configuração
 
-**Faça um fork desse projeto para iniciar o desenvolvimento. PRs não serão aceitos.**
+Antes de iniciar o projeto, configure as seguintes variáveis no arquivo `.env`:
 
-### Configuração do ambiente
-
-**Setup laravel conforme a documentação pode usar qualquer opção usando 'Valet, artisan serve ou docker'.**
-
-### Funcionalidades a serem implementadas
-
-**Essa aplicação deverá se comportar como uma API REST, onde será consumida por outros sistemas. Nesse teste você deverá se preocupar em constriuir somente a API**. 
-
-##### CRUD produtos
-
-Aqui você deverá desenvolver as principais operações para o gerenciamento de um catálogo de produtos, sendo elas:
-
-- Criação
-- Atualização
-- Exclusão
-
-O produto deve ter a seguinte estrutura:
-
-Campo       | Tipo      | Obrigatório   | Pode se repetir
------------ | :------:  | :------:      | :------:
-id          | int       | true          | false
-name        | string    | true          | false        
-price       | float     | true          | true
-decription  | text      | true          | true
-category    | string    | true          | true
-image_url   | url       | false         | true
-
-Os endpoints de criação e atualização devem seguir o seguinte formato de payload:
-
-```json
-{
-    "name": "product name",
-    "price": 109.95,
-    "description": "Neque porro quisquam est qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit...",
-    "category": "test",
-    "image": "https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg"
-}
+```env
+APP_PORT=
+DB_USERNAME=
+DB_PASSWORD=
 ```
 
-**Importante:** Tanto os endpoints de criação é atualização, deverão ter uma camada de validação dos campos.
 
-##### Buscas de produtos
+### Exemplo de Configuração
 
-Para realizar a manutenção de um catálogo de produtos é necessário que o sistema tenha algumas buscas, sendo elas:
+```env
+APP_PORT=8080
+DB_USERNAME=seu_usuario
+DB_PASSWORD=sua_senha
+```
 
-- Busca pelos campos `name` e `category` (trazer resultados que batem com ambos os campos).
-- Busca por uma categoria específica.
-- Busca de produtos com e sem imagem.
-- Buscar um produto pelo seu ID único.
+## Passos para Executar o Projeto
 
-##### Importação de produtos de uma API externa
+1. **Construir e iniciar os contêineres:**
 
-É necessário que o sistema seja capaz de importar produtos que estão em um outro serviço. Deverá ser criado um comando que buscará produtos nessa API e armazenará os resultados para a sua base de dados. 
+   ```sh
+   docker-compose up -d
+   ```
 
-Sugestão: `php artisan products:import`
+   Isso irá construir as imagens Docker e iniciar os contêineres em segundo plano.
 
-Esse comando deverá ter uma opção de importar um único produto da API externa, que será encontrado através de um ID externo.
+2. **Gerar a chave da aplicação:**
 
-Sugestão: `php artisan products:import --id=123`
+   ```sh
+   docker exec product php artisan key:generate
+   ```
 
-Utilize a seguinte API para importar os produtos: [https://fakestoreapi.com/docs](https://fakestoreapi.com/docs)
+3. **Executar as migrações do banco de dados:**
+
+   ```sh
+   docker exec product php artisan migrate
+   ```
+
+## Ativando o Horizon
+
+Para ativar o Horizon, certifique-se de que as seguintes variáveis estão configuradas corretamente no arquivo `.env`:
+
+```env
+QUEUE_CONNECTION=redis
+REDIS_CLIENT=predis
+REDIS_HOST=product-redis
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+```
+
+Em seguida, execute o comando:
+
+```sh
+docker exec -d product php artisan horizon
+```
+
+## Importação de Produtos
+
+### Importação de Todos os Produtos
+
+Para importar todos os produtos, execute o comando:
+
+```sh
+docker exec product php artisan products:import
+```
+
+### Importação de Produtos Específicos por ID
+
+Para importar produtos específicos por ID, use o seguinte comando:
+
+```sh
+docker exec product php artisan products:import --id=1 --id=2 --id=3
+```
+
+Substitua `1`, `2`, `3` pelos IDs dos produtos que deseja importar.
+
+## Parando os Contêineres
+
+Para parar os contêineres, execute:
+
+```sh
+docker-compose down
+```
+
+## Problemas Comuns
+
+### Erro de Conexão com o Banco de Dados
+
+Certifique-se de que as variáveis `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` e `DB_PASSWORD` estão configuradas corretamente no arquivo `.env`.
+
+### Permissões de Arquivos
+
+Se encontrar problemas de permissão, verifique se o usuário e grupo do contêiner têm acesso de leitura e escrita às pastas necessárias.
 
 ---
 
-Se houver dúvidas, por favor, abra uma issue nesse repositório.
+Com essas instruções, você deve conseguir configurar e rodar o projeto sem problemas. Se precisar de mais ajuda, consulte a [documentação oficial do Laravel](https://laravel.com/docs) e do [Docker](https://docs.docker.com/).
