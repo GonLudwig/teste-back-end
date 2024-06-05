@@ -25,8 +25,8 @@ class Import extends Command
     public function handle(): void
     {
         $externalIds = $this->option('id');
-        
-        if (!empty($externalIds)) {
+
+        if (! empty($externalIds)) {
             foreach ($externalIds as $externalId) {
                 $this->byId($externalId);
             }
@@ -70,13 +70,13 @@ class Import extends Command
             $response = $this->request->get('products/'.$externalId);
         } catch (Exception $e) {
             Log::error('Console\Commands\Products\Import->byId message: '.$e->getMessage(),
-                ['exception' => $e,]
+                ['exception' => $e]
             );
-            
+
             $this->error('Error communicating with external API.');
             exit(1);
         }
-        
+
         if ($response->status() != 200) {
             Log::error('Console\Commands\Products\Import->all ', ['response' => $response]);
 

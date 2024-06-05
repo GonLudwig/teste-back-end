@@ -9,10 +9,10 @@ uses(RefreshDatabase::class);
 it('returns a JSON response with the product', function () {
     $product = Product::factory()->create();
 
-    $response = $this->getJson('/api/products/' . $product->id);
+    $response = $this->getJson('/api/products/'.$product->id);
 
     $response->assertStatus(200)
-             ->assertJson($product->toArray());
+        ->assertJson($product->toArray());
 });
 
 it('returns a status 400 parameter does not correspond to an ID', function () {
@@ -21,7 +21,7 @@ it('returns a status 400 parameter does not correspond to an ID', function () {
     $response = $this->getJson('/api/products/error');
 
     $response->assertStatus(400)
-             ->assertJsonStructure(['message']);
+        ->assertJsonStructure(['message']);
 
     Log::shouldHaveReceived('info')
         ->once();
@@ -32,10 +32,10 @@ it('returns a status 404', function () {
 
     $product = Product::factory()->create();
 
-    $response = $this->getJson('/api/products/'. $product->id + 1);
+    $response = $this->getJson('/api/products/'.$product->id + 1);
 
     $response->assertStatus(404)
-             ->assertJsonStructure(['message']);
+        ->assertJsonStructure(['message']);
 
     Log::shouldHaveReceived('info')
         ->once();

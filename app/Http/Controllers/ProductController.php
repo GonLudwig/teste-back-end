@@ -17,8 +17,7 @@ class ProductController extends Controller
 {
     public function __construct(
         private ProductService $productService
-    )
-    {
+    ) {
     }
 
     public function index(Request $request): JsonResponse
@@ -29,10 +28,12 @@ class ProductController extends Controller
             );
         } catch (HttpException $e) {
             Log::info('message: '.$e->getMessage());
+
             return response()->json(['message' => $e->getMessage()], $e->getStatusCode());
         } catch (Exception $e) {
             $code = strval(time());
             Log::error('code: '.$code.' message: '.$e->getMessage());
+
             return response()->json(['message' => 'Unexpected error. code: '.$code], 500);
         }
 
@@ -46,10 +47,12 @@ class ProductController extends Controller
             );
         } catch (HttpException $e) {
             Log::info('message: '.$e->getMessage());
+
             return response()->json(['message' => $e->getMessage()], $e->getStatusCode());
         } catch (Exception $e) {
             $code = strval(time());
             Log::error('code: '.$code.' message: '.$e->getMessage());
+
             return response()->json(['message' => 'Unexpected error. code: '.$code], 500);
         }
     }
@@ -63,10 +66,12 @@ class ProductController extends Controller
             );
         } catch (HttpException $e) {
             Log::info('message: '.$e->getMessage());
+
             return response()->json(['message' => $e->getMessage()], $e->getStatusCode());
         } catch (Exception $e) {
             $code = strval(time());
             Log::error('code: '.$code.' message: '.$e->getMessage());
+
             return response()->json(['message' => 'Unexpected error. code: '.$code], 500);
         }
     }
@@ -79,13 +84,16 @@ class ProductController extends Controller
             if ($this->productService->updateById($product, $this->structureBody($request))) {
                 Arr::set($message, 'message', 'updated sucessfuly');
             }
+
             return response()->json($message);
         } catch (HttpException $e) {
             Log::info('message: '.$e->getMessage());
+
             return response()->json(['message' => $e->getMessage()], $e->getStatusCode());
         } catch (Exception $e) {
             $code = strval(time());
             Log::error('code: '.$code.' message: '.$e->getMessage());
+
             return response()->json(['message' => 'Unexpected error. code: '.$code], 500);
         }
     }
@@ -99,13 +107,16 @@ class ProductController extends Controller
             if ($this->productService->deleteById($product)) {
                 Arr::set($message, 'message', 'deleted successfully');
             }
+
             return response()->json($message);
         } catch (HttpException $e) {
             Log::info('message: '.$e->getMessage());
+
             return response()->json(['message' => $e->getMessage()], $e->getStatusCode());
         } catch (Exception $e) {
             $code = strval(time());
             Log::error('code: '.$code.' message: '.$e->getMessage());
+
             return response()->json(['message' => 'Unexpected error. code: '.$code], 500);
         }
     }

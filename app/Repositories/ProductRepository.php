@@ -33,12 +33,13 @@ class ProductRepository
     {
         try {
             DB::beginTransaction();
+
             return $this->product->create($data);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             $code = strval(time());
-            Log::error('ProductRepository->store code: '.$code.' message: '.$e->getMessage().' data: ',$data);
+            Log::error('ProductRepository->store code: '.$code.' message: '.$e->getMessage().' data: ', $data);
             throw new ErrorException('Unexpected error. code: '.$code);
         }
     }
@@ -47,12 +48,13 @@ class ProductRepository
     {
         try {
             DB::beginTransaction();
+
             return $product->update($data);
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             $code = strval(time());
-            Log::error('ProductRepository->update code: '.$code.' message: '.$e->getMessage().' data: ',$data);
+            Log::error('ProductRepository->update code: '.$code.' message: '.$e->getMessage().' data: ', $data);
             throw new ErrorException('Unexpected error. code: '.$code);
         }
     }
@@ -61,6 +63,7 @@ class ProductRepository
     {
         try {
             DB::beginTransaction();
+
             return $product->delete();
             DB::commit();
         } catch (Exception $e) {

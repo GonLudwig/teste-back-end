@@ -11,9 +11,9 @@ it('returns a JSON response with products', function () {
     $response = $this->getJson('/api/products');
 
     $response->assertStatus(200)
-             ->assertJsonStructure([
-                 '*' => ['id', 'name', 'price'],
-             ]);
+        ->assertJsonStructure([
+            '*' => ['id', 'name', 'price'],
+        ]);
 });
 
 it('returns a JSON response with products and query params', function () {
@@ -24,7 +24,7 @@ it('returns a JSON response with products and query params', function () {
     );
 
     $response->assertStatus(200)
-             ->assertJsonStructure([
-                ['id', 'name', 'price']
-             ]);
+        ->assertJsonStructure([
+            ['id', 'name', 'price'],
+        ]);
 });

@@ -1,8 +1,8 @@
 <?php
 
+use App\Jobs\Product\CreateJob;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
-use App\Jobs\Product\CreateJob;
 
 it('imports all products successfully', function () {
     Queue::fake();
@@ -49,11 +49,10 @@ it('imports a product by id successfully', function () {
     ]);
 
     $this->artisan('products:import', ['--id' => [1]])
-        ->expectsOutput("Product ID: 1 has been imported successfully.")
+        ->expectsOutput('Product ID: 1 has been imported successfully.')
         ->assertSuccessful();
 
     Queue::assertPushed(CreateJob::class, function ($job) {
         return $job->data['title'] === 'Product 1';
     });
 });
-

@@ -32,7 +32,7 @@ class CreateJob implements ShouldQueue
                     'price' => Arr::get($this->data, 'price'),
                     'description' => Arr::get($this->data, 'description'),
                     'category' => Arr::get($this->data, 'category'),
-                    'image_url' => Arr::get($this->data, 'image')
+                    'image_url' => Arr::get($this->data, 'image'),
                 ]
             );
         } catch (Exception $e) {

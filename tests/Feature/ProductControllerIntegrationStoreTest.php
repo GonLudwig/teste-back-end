@@ -39,7 +39,7 @@ it('create a new product with not unique name', function () {
     $response = $this->postJson('/api/products', $productData);
 
     $response->assertStatus(422)
-             ->assertJsonStructure(['message']);
+        ->assertJsonStructure(['message']);
 });
 
 it('create a new product with not numeric price', function () {
@@ -55,6 +55,6 @@ it('create a new product with not numeric price', function () {
     $response = $this->postJson('/api/products', $productData);
 
     $response->assertStatus(422)
-             ->assertJsonStructure(['message']);
+        ->assertJsonStructure(['message']);
 
 });

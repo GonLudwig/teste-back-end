@@ -10,7 +10,7 @@ it('updates an existing product', function () {
     $product = Product::factory()->create();
 
     $response = $this->putJson(
-        '/api/products/' . $product->id,
+        '/api/products/'.$product->id,
         [
             'name' => 'Updated Product Name',
             'price' => 20.99,
@@ -37,12 +37,12 @@ it('create a new product with not unique name', function () {
     $productSecond = Product::factory()->create();
 
     $response = $this->putJson(
-        '/api/products/' . $product->id,
+        '/api/products/'.$product->id,
         ['name' => $productSecond->name]
     );
 
     $response->assertStatus(422)
-             ->assertJsonStructure(['message']);
+        ->assertJsonStructure(['message']);
 });
 
 it('returns a status 404', function () {
@@ -50,10 +50,10 @@ it('returns a status 404', function () {
 
     $product = Product::factory()->create();
 
-    $response = $this->putJson('/api/products/'. $product->id + 1);
+    $response = $this->putJson('/api/products/'.$product->id + 1);
 
     $response->assertStatus(404)
-             ->assertJsonStructure(['message']);
+        ->assertJsonStructure(['message']);
 
     Log::shouldHaveReceived('info')
         ->once();

@@ -12,8 +12,7 @@ class ProductService
 {
     public function __construct(
         private ProductRepository $productRepository
-    )
-    {
+    ) {
     }
 
     public function listAll(array $queryParms = []): Collection
@@ -34,7 +33,7 @@ class ProductService
 
     public function create(array $data): Product
     {
-        return $this->productRepository->create($data); 
+        return $this->productRepository->create($data);
     }
 
     public function updateById(mixed $product, array $data): bool
