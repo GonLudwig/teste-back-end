@@ -1,6 +1,6 @@
 # Projeto Laravel com Docker
 
-Este projeto é uma aplicação Laravel configurada para rodar com Docker. A seguir, você encontrará instruções detalhadas sobre como configurar, executar e utilizar o projeto.
+Este projeto é uma aplicação Laravel configurada para rodar com Docker. Abaixo estão as instruções detalhadas sobre como configurar, executar e utilizar o projeto.
 
 ## Pré-requisitos
 
@@ -13,6 +13,7 @@ Antes de iniciar o projeto, configure as seguintes variáveis no arquivo `.env`:
 
 ```env
 APP_PORT=
+DB_DATABASE=
 DB_USERNAME=
 DB_PASSWORD=
 ```
@@ -21,11 +22,12 @@ DB_PASSWORD=
 
 ```env
 APP_PORT=8080
+DB_DATABASE=sua_base
 DB_USERNAME=seu_usuario
 DB_PASSWORD=sua_senha
 ```
 
-## Passos para Executar o Projeto
+## Executando o Projeto
 
 1. **Construir e iniciar os contêineres:**
 
@@ -106,6 +108,12 @@ docker-compose down
 ## Problemas Comuns
 
 ### Erro de Conexão com o Banco de Dados
+
+Se houver problemas com a porta exposta do banco de dados, troque a variável `DB_EXTERNAL_PORT` no arquivo `.env`.
+
+```env
+DB_EXTERNAL_PORT=3307
+```
 
 Certifique-se de que as variáveis `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` e `DB_PASSWORD` estão configuradas corretamente no arquivo `.env`.
 
