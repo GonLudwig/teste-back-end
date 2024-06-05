@@ -5,61 +5,54 @@ namespace App\Services;
 use App\Models\Product;
 use App\Repositories\ProductRepository;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ProductService
 {
     public function __construct(
-        private ProductRepository $repository
+        private ProductRepository $productRepository
     )
     {
     }
 
-    public function index(array $queryParms = []): Collection
+    public function listAll(array $queryParms = []): Collection
     {
-        return $this->repository->index(
+        return $this->productRepository->all(
             $this->validateQueryParms($queryParms)
         );
     }
 
-    public function show(mixed $product): Product
+    public function findById(mixed $product): Product
     {
-        $product = $this->repository->show($this->validateId($product));
+        $product = $this->productRepository->findById($this->validateId($product));
 
-        \throw_if($product == \null, new HttpException(404, 'Product not found.'));
+        throw_if($product == null, new HttpException(404, 'Product not found.'));
 
         return $product;
     }
 
-    public function store(array $data): Product
+    public function create(array $data): Product
     {
-        return $this->repository->store($data); 
+        return $this->productRepository->create($data); 
     }
 
-    public function update(mixed $product, array $data): string
+    public function updateById(mixed $product, array $data): bool
     {
-        $product = $this->repository->show($this->validateId($product));
+        $product = $this->productRepository->findById($this->validateId($product));
 
-        \throw_if($product == \null, new HttpException(404, 'Product not found.'));
+        throw_if($product == null, new HttpException(404, 'Product not found.'));
 
-        if ($this->repository->update($product, $data)) {
-            return 'updated successfully';
-        }
-
-        return 'error on updated';
+        return $this->productRepository->updateById($product, $data);
     }
 
-    public function destroy(mixed $product): string
+    public function deleteById(mixed $product): bool
     {
-        $product = $this->repository->show($this->validateId($product));
+        $product = $this->productRepository->findById($this->validateId($product));
 
-        \throw_if($product == \null, new HttpException(404, 'Product not found.'));
+        throw_if($product == null, new HttpException(404, 'Product not found.'));
 
-        if ($this->repository->destroy($product)) {
-            return 'deleted successfully';
-        }
-
-        return 'error on updated';
+        return $this->productRepository->deleteById($product);
     }
 
     private function validateQueryParms(array $queryParms): array
@@ -71,20 +64,36 @@ class ProductService
         }
 
         if (isset($queryParms['name'])) {
-            $querys['name'] = $queryParms['name'];
+            Arr::set(
+                $querys,
+                'name',
+                Arr::get($queryParms, 'name')
+            );
         }
 
         if (isset($queryParms['category'])) {
-            $querys['category'] = $queryParms['category'];
+            Arr::set(
+                $querys,
+                'category',
+                Arr::get($queryParms, 'category')
+            );
         }
 
         if (isset($queryParms['image_url'])) {
-            if ($queryParms['image_url'] == 'true') {
-                $querys['image_url'] = true;
+            if (Arr::get($queryParms, 'image_url') == 'true') {
+                Arr::set(
+                    $querys,
+                    'image_url',
+                    true
+                );
             }
 
-            if ($queryParms['image_url'] == 'false') {
-                $querys['image_url'] = false;
+            if (Arr::get($queryParms, 'image_url') == 'false') {
+                Arr::set(
+                    $querys,
+                    'image_url',
+                    false
+                );
             }
         }
 
@@ -95,7 +104,7 @@ class ProductService
     {
         $id = intval($product);
 
-        \throw_if(
+        throw_if(
             $id == 0,
             new HttpException(400, 'Parameter does not correspond to an ID.')
         );

@@ -3,18 +3,20 @@
 namespace App\Jobs\Product;
 
 use App\Models\Product;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 
 class CreateJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected array $data;
+    public array $data;
 
     public function __construct(array $data)
     {
@@ -25,15 +27,15 @@ class CreateJob implements ShouldQueue
     {
         try {
             Product::updateOrCreate(
-                ['name' => $this->data['title']],
+                ['name' => Arr::get($this->data, 'title')],
                 [
-                    'price' => $this->data['price'],
-                    'description' => $this->data['description'],
-                    'category' => $this->data['category'],
-                    'image_url' => $this->data['image']
+                    'price' => Arr::get($this->data, 'price'),
+                    'description' => Arr::get($this->data, 'description'),
+                    'category' => Arr::get($this->data, 'category'),
+                    'image_url' => Arr::get($this->data, 'image')
                 ]
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error('Jobs\Product\CreateJob message: '.$e->getMessage(), [
                 'exception' => $e,
             ]);
