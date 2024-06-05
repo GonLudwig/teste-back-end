@@ -21,7 +21,8 @@ RUN apk update \
     && docker-php-ext-configure gd \
     && docker-php-ext-install pdo pdo_mysql mysqli exif pcntl \
     && chmod -R 777 /var/www/storage/ \
-    && composer install
+    && composer install \
+    && php artisan key:generate
 
 EXPOSE 80
 
